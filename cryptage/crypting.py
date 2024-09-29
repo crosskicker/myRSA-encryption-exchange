@@ -70,11 +70,15 @@ print("Private Key:", private_key)
 # Fonction pour chiffrer un message (message doit être un entier)
 def encrypt_rsa(message, public_key):
     n, e = public_key
+    #TODO 
+    # USE fastExp
     return pow(message, e, n)  # message^e % n
 
 # Fonction pour déchiffrer un message chiffré
 def decrypt_rsa(cipher, private_key):
     n, d = private_key
+     #TODO 
+    # USE fastExp
     return pow(cipher, d, n)  # cipher^d % n
 
 # Message à chiffrer
