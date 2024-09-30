@@ -46,7 +46,7 @@ def client_program():
 
     #Send public key
     file_data = create_json_pbKey(public_key,"client")
-    socket.sendall(file_data)
+    client_socket.sendall(file_data)
     
     # Démarrer un thread pour recevoir les messages
     receive_thread = threading.Thread(target=receive_messages, args=(client_socket,))

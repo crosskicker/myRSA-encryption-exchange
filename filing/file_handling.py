@@ -9,26 +9,21 @@ def create_json_pbKey(pb_key,name):
         json.dump(public_key_data, f)
     with open('public_key_'+ name +'.json', 'rb') as f:
         file_data = f.read()
-    print("public key du file server : ",file_data)
+    print("size file : ",len(file_data))
     return file_data
 
 def receive_json(socket, name):
+    file_size = 636 #change if you change size key
     # Recevoir les données du fichier
-    print("pret a recevoir")
     file_data = b""
-    while True:
+    while len(file_data) < file_size:
         packet = socket.recv(4096)  # Recevoir par blocs de 4096 bytes
         if not packet:
             break
-        file_data += packet
-    print("j'ai fini de recevoir le fichier")
-    
+        file_data += packet    
     # Écrire les données reçues dans un fichier
     with open('received_'+ name +'.json', 'wb') as f:
         f.write(file_data)
-
-    print("Fichier reçu et enregistré sous 'received_public_key.json'")
-
     # Lire le fichier JSON et récupérer les valeurs de la clé publique
     with open('received_'+ name +'.json', 'r') as f:
         public_key_data = json.load(f)
