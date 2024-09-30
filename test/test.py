@@ -4,6 +4,34 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from cryptage.crypting import *
 
+# function: decompose an integer into a sum of powers of 2
+# input: int
+# output: list of int
+# result: list of exponents of 2 in our sum
+def intToBinExp(num):
+    binNum = bin(num)
+    l = []
+    for i in range(2,len(binNum)):
+        if binNum[i] == "1":
+            l.append(len(binNum) - 1 - i )
+    return l
+
+# fonction : calcculate an integer to the power of an other integer
+# with the algorythm of fast exponentielle
+# input : int , int list
+# output : int
+# result : the integer to the power of an other (with specific format : see intToBinExp )
+def fastExp(c,lexp):
+    res = 1
+    lexp.reverse()
+    for i in lexp:
+         if i == 0:
+            res *= c
+         else:
+            # (c ^ (2 ^ (i - 1))) ^ 2
+            res *= (c ** (2 ** (i - 1))) ** 2
+    return res
+
 #Test function   
 def testIntToBinExp():
     assert intToBinExp(129) == [7,0]
