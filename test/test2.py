@@ -4,6 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from cryptage.crypting import *
 
+#performance test
 import time 
 message = "bonjour tout le monde"
 msg = int.from_bytes(message.encode('utf-8'), 'big')
@@ -15,11 +16,14 @@ end = time.time()
 
 
 st2 = time.time()
-fastExp(msg,intToBinExp(e)) % n
+#fastExp(msg,intToBinExp(e)) % n
+public_key, private_key = generate_rsa_keys()
 en2 = time.time()
 
 print(end - start)
 print(en2 - st2)
+
+public_key, private_key = generate_rsa_keys()
 
 ########### test #########""
 msg_test = "bonjour le monde"
