@@ -4,8 +4,11 @@ This is a personal project where the goal is to implant the RSA algorythm and to
 
 Pre-requisite : python3
 
+### Linux
 if you don't have python you can install it `apt install python3`
 
+### Windows 
+If you don't have python you can install it on https://www.python.org/ftp/python/3.10.15/Python-3.10.15.tgz
 
 ## Download project
 
