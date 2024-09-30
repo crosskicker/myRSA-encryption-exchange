@@ -1,5 +1,10 @@
 import socket 
 import threading
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from cryptage.crypting import *
+from filing.file_handling import *
 
 
 #il faut un thread pour recevoir les message et le 
@@ -22,10 +27,22 @@ def receive_messages(conn):
             break
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('localhost', 9876))
+server_socket.bind(('localhost', 5656))
 
 server_socket.listen(5) 
 conn, addr = server_socket.accept()
+
+##### Keys exchange #### 
+#Generate keys
+public_key, private_key = generate_rsa_keys()
+
+#Send public key
+file_data = create_json_pbKey(public_key,"server")
+conn.sendall(file_data) 
+print("j'ai fini denvoyer le fichier")
+
+#receive client key
+client_key = receive_json(conn,"server")
 
 # Démarrer un thread pour recevoir les messages
 receive_thread = threading.Thread(target=receive_messages, args=(conn,))

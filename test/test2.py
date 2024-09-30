@@ -32,3 +32,6 @@ print("voici le msg crypte : " , msg_code)
 
 msg_dec = decrypt_rsa(msg_code, private_key)
 print("voici le msg crypte : " , msg_dec) 
+
+#cle public 
+print("voici ma cle public : " , public_key)

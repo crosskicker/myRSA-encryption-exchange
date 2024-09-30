@@ -1,5 +1,11 @@
 import socket
 import threading
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from cryptage.crypting import *
+from filing.file_handling import *
+
 
 # Fonction pour recevoir des messages en continu depuis le serveur
 def receive_messages(client_socket):
@@ -20,15 +26,28 @@ def receive_messages(client_socket):
 # Fonction principale pour le client
 def client_program():
     ip_server = '127.0.0.1'  # Adresse du serveur
-    port_server = 9876       # Port du serveur
+    port_server = 5656       # Port du serveur
 
     # Créer un socket client
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
+    #Generate keys
+    public_key, private_key = generate_rsa_keys()
+
     # Connexion au serveur
     client_socket.connect((ip_server, port_server))
     print("Connected to the server.")
 
+    ##### Keys exchange #### 
+    
+    #receive server key
+    server_key = receive_json(client_socket,"client")
+    print(server_key)
+
+    #Send public key
+    file_data = create_json_pbKey(public_key,"client")
+    socket.sendall(file_data)
+    
     # Démarrer un thread pour recevoir les messages
     receive_thread = threading.Thread(target=receive_messages, args=(client_socket,))
     receive_thread.daemon = True  # Le thread se termine automatiquement lorsque le programme principal se termine
