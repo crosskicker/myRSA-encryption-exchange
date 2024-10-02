@@ -2,6 +2,7 @@ import random
 from sympy import mod_inverse, isprime
 import threading
 import queue
+import time
 
 def generate_large_prime(bits, output_queue):
     while True:
@@ -12,19 +13,22 @@ def generate_large_prime(bits, output_queue):
             break
 
 # Generate RSA keys with default size of 1024 bits
-def generate_rsa_keys(bits=1024):
+def generate_rsa_keys(bits=2048):
     q = queue.Queue()
 
     # To have two threads for calculate 2 prime number (much faster)
     thread1 = threading.Thread(target=generate_large_prime, args=(bits, q))
     thread2 = threading.Thread(target=generate_large_prime, args=(bits, q))
 
+    start = time.time()
     thread1.start()
     thread2.start()
 
     # Get results in the queue
     p = q.get()  # waiting for the value 
+    en1 = time.time()
     qp = q.get()
+    en2 = time.time()
 
     thread1.join()
     thread2.join()
@@ -42,11 +46,6 @@ def generate_rsa_keys(bits=1024):
     # Clé publique (n, e), clé privée (n, d)
     return (n, e), (n, d)
 
-public_key, private_key = generate_rsa_keys(bits=1024)  # RSA-2048 (car n sera de 2048 bits)
-""" print("Public Key:", public_key)
-print("Private Key:", private_key) """
-
-
 # Function to encrypt (must be an integer)
 def encrypt_rsa(message, public_key):
 
@@ -54,11 +53,11 @@ def encrypt_rsa(message, public_key):
     msg = int.from_bytes(message.encode('utf-8'), 'big')
     n, e = public_key
     #pow is very powerful, much more so than our functions due to its low-level implementation
-    return pow(msg, e, n)  # message^e % n
+    return pow(msg, e, n)  # message ** e % n
 
 # Function to decrypt
 def decrypt_rsa(cipher, private_key):
     n, d = private_key
-    msg_dec = pow(cipher, d, n)  # cipher^d % n
+    msg_dec = pow(cipher, d, n)  # cipher ** d % n
     return msg_dec.to_bytes((msg_dec.bit_length() + 7) // 8, 'big').decode('utf-8')
 
