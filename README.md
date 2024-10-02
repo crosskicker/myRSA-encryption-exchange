@@ -14,7 +14,7 @@ If you don't have python you can install it on [https://www.python.org/ftp/pytho
 
 ## Download project
 
-git clone  <lien.git>
+git clone  [https://github.com/crosskicker/myRSA-encryption-exchange.git](https://github.com/crosskicker/myRSA-encryption-exchange.git)
 
 ## Run project
 

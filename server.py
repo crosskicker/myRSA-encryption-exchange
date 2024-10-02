@@ -46,6 +46,8 @@ conn.sendall(file_data)
 # Receive client key
 client_key = receive_json(conn, "server")
 
+print("Connected to the client")
+
 # Start a thread to receive messages
 receive_thread = threading.Thread(target=receive_messages, args=(conn, private_key))
 receive_thread.daemon = True  # The thread will automatically terminate when the main program ends
