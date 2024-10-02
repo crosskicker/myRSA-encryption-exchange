@@ -7,63 +7,67 @@ from cryptage.crypting import *
 from filing.file_handling import *
 
 
-# Fonction pour recevoir des messages en continu depuis le serveur
-def receive_messages(client_socket):
+# Function to continuously receive messages from the server
+def receive_messages(client_socket, private_key):
     while True:
         try:
-            # On essaie de recevoir des données du serveur
+            # Try to receive data from the server
             data = client_socket.recv(1024)
             if data:
-                print(f"\nServer: {data.decode('utf-8')}")
+                msg_c = int.from_bytes(data, byteorder='big')
+                msg = decrypt_rsa(msg_c, private_key)
+                print(f"\nServer: {msg}")
             else:
-                # Si aucune donnée reçue, on peut penser que la connexion est fermée
+                # If no data is received, we can assume the connection is closed
                 print("Connection closed by server.")
                 break
         except Exception as e:
             print(f"Error: {e}")
             break
 
-# Fonction principale pour le client
+# Main function for the client
 def client_program():
-    ip_server = '127.0.0.1'  # Adresse du serveur
-    port_server = 5656       # Port du serveur
+    ip_server = '127.0.0.1'  # Server address
+    port_server = 5656       # Server port
 
-    # Créer un socket client
+    # Create a client socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
-    #Generate keys
+    # Generate keys
     public_key, private_key = generate_rsa_keys()
 
-    # Connexion au serveur
+    # Connect to the server
     client_socket.connect((ip_server, port_server))
     print("Connected to the server.")
 
-    ##### Keys exchange #### 
+    ##### Keys exchange ####
     
-    #receive server key
-    server_key = receive_json(client_socket,"client")
-    print(server_key)
+    # Receive server key
+    server_key = receive_json(client_socket, "client")
 
-    #Send public key
-    file_data = create_json_pbKey(public_key,"client")
+    # Send public key
+    file_data = create_json_pbKey(public_key, "client")
     client_socket.sendall(file_data)
     
-    # Démarrer un thread pour recevoir les messages
-    receive_thread = threading.Thread(target=receive_messages, args=(client_socket,))
-    receive_thread.daemon = True  # Le thread se termine automatiquement lorsque le programme principal se termine
+    # Start a thread to receive messages
+    receive_thread = threading.Thread(target=receive_messages, args=(client_socket, private_key,))
+    receive_thread.daemon = True  # The thread will terminate automatically when the main program ends
     receive_thread.start()
 
-    # Boucle pour envoyer des messages au serveur
+    # Loop to send messages to the server
     try:
         while True:
-            message = input("You: ")  # Entrer un message via le clavier
+            message = input("You: ")  # Enter a message via the keyboard
             if message.lower() == 'quit':
-                break  # Quitter la boucle si l'utilisateur tape 'quit'
-            client_socket.sendall(message.encode('utf-8'))  # Envoyer le message au serveur
+                break  # Exit the loop if the user types 'quit'
+            msg_c = encrypt_rsa(message, server_key)
+            # Convert the integer into bytes to send them
+            enc_msg_c = msg_c.to_bytes((msg_c.bit_length() + 7) // 8, byteorder='big')
+            client_socket.sendall(enc_msg_c)  
     except KeyboardInterrupt:
         print("\nClient disconnected.")
     finally:
-        client_socket.close()  # Fermer le socket proprement
+        client_socket.close()  # Close the socket properly
 
-# Démarrer le client
+# Start the client
 client_program()
