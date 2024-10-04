@@ -15,7 +15,7 @@ def create_json_pbKey(pb_key, name):
     return file_data
 
 def receive_json(socket, name):
-    file_size = 1252  # Change if you change the key size RSA-1024 -> 636 ; RSA-2048 -> 1252
+    file_size = 636  # Change if you change the key size RSA-2048 -> 636 ; RSA-4096 -> 1252
     # Receive the file data
     file_data = b""
     while len(file_data) < file_size:

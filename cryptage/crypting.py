@@ -12,8 +12,8 @@ def generate_large_prime(bits, output_queue):
             output_queue.put(prime_candidate)  # Add the result in the queue
             break
 
-# Generate RSA keys with default size of 1024 bits
-def generate_rsa_keys(bits=2048):
+# Generate RSA keys with default size of 1024 bits (RSA-2048)
+def generate_rsa_keys(bits=1024):
     q = queue.Queue()
 
     # To have two threads for calculate 2 prime number (much faster)
